@@ -27,8 +27,3 @@ async def serverHealth(db: AsyncSession = Depends(get_db)):
         )
 
 
-#------------
-#POST
-#------------
-
-
