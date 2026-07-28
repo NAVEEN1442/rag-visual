@@ -7,9 +7,11 @@ requires-python = ">=3.14"
 dependencies = [
     "alembic>=1.18.5",
     "asyncpg>=0.31.0",
+    "clerk-backend-api>=6.0.1",
     "fastapi>=0.139.2",
     "psycopg2>=2.9.12",
     "pydantic-settings>=2.14.2",
     "python-dotenv>=1.2.2",
+    "svix>=1.99.1",
     "uvicorn>=0.51.0",
 ]

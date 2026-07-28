@@ -1,3 +1,4 @@
+from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import status
 from fastapi import HTTPException
@@ -5,6 +6,10 @@ from sqlalchemy import text
 from fastapi import Depends
 from fastapi import FastAPI
 from db.session import get_db
+
+from routers.webhooks import clerk_webhook_call
+
+
 
 app = FastAPI()
 
@@ -26,4 +31,11 @@ async def serverHealth(db: AsyncSession = Depends(get_db)):
             detail="Database is connected, but the User table is missing or corrupted."
         )
 
+@app.post("/webhook/clerk")
+async def clerk_webhook(request: Request, db: AsyncSession = Depends(get_db)):
+    return await clerk_webhook_call(request,db)
 
+
+
+
+        
