@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     database_url: SecretStr 
     
     clerk_secret_key: SecretStr
+    clerk_webhook_secret : SecretStr
+    clerk_jwt_public_key : SecretStr
 
     model_config = SettingsConfigDict(
         env_file=".env",
