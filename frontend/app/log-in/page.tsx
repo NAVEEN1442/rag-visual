@@ -30,6 +30,7 @@ export default function SignIn() {
       const result = await signIn.create({ identifier: emailAddress, password });
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
+        window.location.href = "/dashboard";
       }
     } catch (err: any) {
       setError(err.errors?.[0]?.message || "Invalid email or password.");
@@ -75,7 +76,7 @@ export default function SignIn() {
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: `${window.location.origin}/sso-callback`,
-        redirectUrlComplete: "/",
+        redirectUrlComplete: "/dashboard",
       });
     } catch (err: any) {
       console.error("Google sign-in error:", err);

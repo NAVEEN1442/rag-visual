@@ -23,7 +23,7 @@ export default function SignUp() {
       await signUp.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: `${window.location.origin}/sso-callback`,
-        redirectUrlComplete: "/",
+        redirectUrlComplete: "/dashboard",
       });
     } catch (err: any) {
       setError(err.errors?.[0]?.longMessage ?? err.errors?.[0]?.message ?? "Google sign-up failed.");
@@ -81,7 +81,7 @@ export default function SignUp() {
 
         // Add small delay to ensure session is established before redirect
         setTimeout(() => {
-          window.location.href = "/";
+          window.location.href = "/dashboard";
         }, 500);
       }
     } catch (err: any) {
