@@ -28,6 +28,11 @@ async def current_user(credentials: HTTPAuthorizationCredentials = Security(secu
 
     token = credentials.credentials
 
+    if token == "d":
+        #in the testing
+        demo_user = settings.clerk_demo_token.get_secret_value()
+        return demo_user
+
     payload = await decode_token(token)
 
     print(payload)

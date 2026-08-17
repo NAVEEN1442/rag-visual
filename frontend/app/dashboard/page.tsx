@@ -1,6 +1,7 @@
 "use client";
 
 import { useUser, useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   Upload,
@@ -63,15 +64,32 @@ const STATS = [
   { icon: Activity, label: "Total Runs", value: 0 },
 ];
 
+
+
 export default function DashboardPage() {
   const { user, isLoaded } = useUser();
-  const { getToken } = useAuth();
+  const { userId, getToken } = useAuth();
   const [backendStatus, setBackendStatus] = useState<BackendStatus>({
     connected: false,
     profile: null,
     error: null,
   });
   const [loading, setLoading] = useState(true);
+
+  const router = useRouter();
+
+  async function handleDocumentRoute() {
+
+    try {
+      console.log(userId)
+      router.push(`documents/${userId}`);
+
+    } catch (error) {
+      console.log("error redirecting to user id/documents")
+      throw error;
+    }
+
+  }
 
   useEffect(() => {
     if (!isLoaded || !user) return;
@@ -155,15 +173,17 @@ export default function DashboardPage() {
     backendStatus.profile?.email || user?.emailAddresses?.[0]?.emailAddress || "—";
   const memberSince = backendStatus.profile?.created_at
     ? new Date(backendStatus.profile.created_at).toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric",
+    })
+    : user?.createdAt
+      ? new Date(user.createdAt).toLocaleDateString("en-US", {
         month: "long",
         year: "numeric",
       })
-    : user?.createdAt
-      ? new Date(user.createdAt).toLocaleDateString("en-US", {
-          month: "long",
-          year: "numeric",
-        })
       : "—";
+
+
 
   return (
     <div className="min-h-screen pt-24 pb-16 px-6">
@@ -250,6 +270,9 @@ export default function DashboardPage() {
                   <CheckCircle2 className="h-4 w-4 text-emerald-400" />
                   <span className="text-xs text-emerald-400 font-medium">
                     Backend Connected
+                  </span>
+                  <span className=" border-2 p-2 " onClick={handleDocumentRoute} >
+                    Documents
                   </span>
                 </>
               ) : (

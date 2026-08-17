@@ -22,8 +22,8 @@ class Document(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()"))
     user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
-    filename = Column(String, nullable=False)
-    cloudinary_url = Column(String, nullable=False)
+    file_name = Column(String, nullable=False)
+    file_url = Column(String, nullable=False)
     mime_type = Column(String, nullable=False)
     status = Column(String, nullable=False, default='uploaded', server_default='uploaded')
     created_at = Column(DateTime(timezone=True), server_default=func.now())
