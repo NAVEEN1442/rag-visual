@@ -14,6 +14,11 @@ class Settings(BaseSettings):
     clerk_secret_key: SecretStr
     clerk_webhook_secret : SecretStr
     clerk_jwt_public_key : SecretStr
+    clerk_demo_token : SecretStr
+
+
+    supabase_url : SecretStr
+    supabase_service_role_key : SecretStr
 
     model_config = SettingsConfigDict(
         env_file=".env",
