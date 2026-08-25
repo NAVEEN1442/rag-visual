@@ -13,6 +13,7 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     documents = relationship("Document", back_populates="user", cascade="all, delete-orphan")
+    embedded_text_documents = relationship("Embedded_Text_Document", back_populates="user", cascade="all, delete-orphan")
     configs = relationship("PipelineConfig", back_populates="user", cascade="all, delete-orphan")
     runs = relationship("Run", back_populates="user", cascade="all, delete-orphan")
 
@@ -29,7 +30,21 @@ class Document(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     user = relationship("User", back_populates="documents")
-    runs = relationship("Run", back_populates="document")
+    runs = relationship("Run", back_populates="document", cascade="all, delete-orphan")
+    embedded_chunks = relationship("Embedded_Text_Document", back_populates="document", cascade="all, delete-orphan")
+
+
+class Embedded_Text_Document(Base):
+    __tablename__ = "embedded_text_document"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()"))
+    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    document_id = Column(UUID(as_uuid=True), ForeignKey("documents.id", ondelete="CASCADE"), nullable=True)
+    text = Column(String, nullable=False)
+    page_number = Column(Integer, nullable=False)
+
+    user = relationship("User", back_populates="embedded_text_documents")
+    document = relationship("Document", back_populates="embedded_chunks")
 
 
 class PipelineConfig(Base):
@@ -55,8 +70,8 @@ class Run(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()"))
     user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
-    document_id = Column(UUID(as_uuid=True), ForeignKey("documents.id"), nullable=True)
-    config_id = Column(UUID(as_uuid=True), ForeignKey("pipeline_configs.id"), nullable=True)
+    document_id = Column(UUID(as_uuid=True), ForeignKey("documents.id", ondelete="CASCADE"), nullable=True)
+    config_id = Column(UUID(as_uuid=True), ForeignKey("pipeline_configs.id", ondelete="CASCADE"), nullable=True)
     query = Column(String, nullable=False)
     status = Column(String, nullable=False, default='pending', server_default='pending')
     total_latency_ms = Column(Integer, nullable=True)

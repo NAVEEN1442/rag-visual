@@ -37,7 +37,7 @@ const QUICK_ACTIONS = [
     title: "Upload Document",
     description:
       "Upload a PDF, HTML, or scanned document to start processing through your RAG pipeline.",
-    href: "#",
+    href: "/upload",
     color: "rgba(139, 92, 246, 0.15)",
   },
   {
@@ -50,10 +50,10 @@ const QUICK_ACTIONS = [
   },
   {
     icon: Eye,
-    title: "View Runs",
+    title: "Ask Questions",
     description:
       "Browse completed pipeline runs. Replay and inspect every stage with full snapshots.",
-    href: "#",
+    href: "/qa",
     color: "rgba(167, 139, 250, 0.15)",
   },
 ];
@@ -108,7 +108,7 @@ export default function DashboardPage() {
           return;
         }
 
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001";
         const res = await fetch(`${apiUrl}/me`, {
           headers: {
             Authorization: `Bearer ${token}`,

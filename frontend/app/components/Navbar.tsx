@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useUser, UserButton } from "@clerk/nextjs";
-import { Menu, X, Zap } from "lucide-react";
+import { Menu, X, Zap, Upload, MessageSquare } from "lucide-react";
 
 export default function Navbar() {
   const { isSignedIn, isLoaded } = useUser();
@@ -75,6 +75,22 @@ export default function Navbar() {
           {isLoaded && isSignedIn && (
             <>
               <Link
+                href="/upload"
+                className="flex items-center gap-1.5 text-sm font-medium text-zinc-400 transition-colors duration-200 hover:text-white"
+                id="nav-upload"
+              >
+                <Upload className="h-3.5 w-3.5" />
+                Upload
+              </Link>
+              <Link
+                href="/qa"
+                className="flex items-center gap-1.5 text-sm font-medium text-zinc-400 transition-colors duration-200 hover:text-white"
+                id="nav-qa"
+              >
+                <MessageSquare className="h-3.5 w-3.5" />
+                Q&amp;A
+              </Link>
+              <Link
                 href="/dashboard"
                 className="btn-secondary text-sm px-4 py-2"
                 id="nav-dashboard"
@@ -126,25 +142,43 @@ export default function Navbar() {
                     onClick={() => setMobileOpen(false)}
                     className="btn-secondary w-full justify-center py-2.5"
                   >
-                    Sign
+                    Sign In
                   </Link>
                   <Link
                     href="/sign-up"
                     onClick={() => setMobileOpen(false)}
                     className="btn-primary w-full justify-center py-2.5"
                   >
-                    Get
+                    Get Started
                   </Link>
                 </>
               )}
               {isLoaded && isSignedIn && (
-                <Link
-                  href="/dashboard"
-                  onClick={() => setMobileOpen(false)}
-                  className="btn-primary w-full justify-center py-2.5"
-                >
-                  Dashboard
-                </Link>
+                <>
+                  <Link
+                    href="/upload"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-zinc-400 hover:bg-zinc-800/50 hover:text-white transition-colors"
+                  >
+                    <Upload className="h-4 w-4" />
+                    Upload Document
+                  </Link>
+                  <Link
+                    href="/qa"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-zinc-400 hover:bg-zinc-800/50 hover:text-white transition-colors"
+                  >
+                    <MessageSquare className="h-4 w-4" />
+                    Q&A
+                  </Link>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMobileOpen(false)}
+                    className="btn-primary w-full justify-center py-2.5"
+                  >
+                    Dashboard
+                  </Link>
+                </>
               )}
             </div>
           </div>

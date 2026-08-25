@@ -24,8 +24,19 @@ services:
     volumes:
       - chroma_data:/chroma/chroma
 
+  ollama:
+    image: ollama/ollama
+    container_name: OLLAMA
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
 volumes:
   redis_data:
     driver: local
   chroma_data:
+    driver: local
+  ollama_data:
     driver: local

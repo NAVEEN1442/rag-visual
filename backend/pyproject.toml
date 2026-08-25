@@ -12,6 +12,7 @@ dependencies = [
     "cloudinary>=1.45.0",
     "cryptography>=48.0.1",
     "fastapi>=0.139.2",
+    "groq>=1.6.0",
     "psycopg2>=2.9.12",
     "pydantic-settings>=2.14.2",
     "pyjwt>=2.13.0",
@@ -20,5 +21,6 @@ dependencies = [
     "redis>=8.1.0",
     "supabase>=2.31.0",
     "svix>=1.99.1",
+    "unstructured[pdf]>=0.25.2",
     "uvicorn>=0.51.0",
 ]
