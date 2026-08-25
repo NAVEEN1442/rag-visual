@@ -1,4 +1,5 @@
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+console.log("BASE_URL", BASE_URL)
 
 type ApiConfig = RequestInit & {
     headers?: Record<string, string>;
@@ -41,6 +42,8 @@ async function apiClient<T>(
             : data !== undefined
                 ? JSON.stringify(data)
                 : undefined;
+
+
 
         const response = await fetch(`${BASE_URL}${endpoint}`, {
             ...config,

@@ -1,3 +1,4 @@
+import pipeline
 from fastapi import UploadFile, File
 from typing import Annotated
 from fastapi.datastructures import FormData
@@ -11,10 +12,14 @@ from fastapi import Depends
 from fastapi import FastAPI
 from db.session import get_db
 
+from pipeline.base import process_file
+
 
 from routers.webhooks import clerk_webhook_call
 from routers.me import current_user, get_user_profile
-from routers.documents import upload_documents,get_document_user
+from routers.documents import upload_documents, get_document_user, delete_document
+from routers.runs import run_get_answer 
+from vectorstore.chroma_client import chroma_db_client as chroma
 
 app = FastAPI()
 
@@ -59,12 +64,42 @@ async def get_current_user(profile: dict = Depends(get_user_profile)):
 async def clerk_webhook(request: Request, db: AsyncSession = Depends(get_db)):
     return await clerk_webhook_call(request,db)
 
+@app.post("/document/delete_all")
+async def clear_document_volume(db: Annotated[AsyncSession, Depends(get_db)]):
+    """
+    Clear all embeddings from Chroma AND truncate the embedded_text_document table in Postgres.
+    """
+    chroma_result = chroma.empty_chroma_storage()
+    await db.execute(text("TRUNCATE TABLE embedded_text_document CASCADE;"))
+    await db.commit()
+    return {
+        **chroma_result,
+        "postgres": "embedded_text_document table cleared"
+    }
+
 @app.post("/document-upload")
 async def document_upload(db: Annotated[AsyncSession, Depends(get_db)] , file : Annotated[UploadFile, File(...)] , profile: Annotated[dict, Depends(get_user_profile)]):
     user_id = profile['user_id']
     return await upload_documents(db,file,user_id)
 
-@app.get("/get-documents")
-async def get_AllDocuments_USER(db:Annotated[AsyncSession, Depends(get_db)],profile:Annotated[dict,Depends(get_user_profile)]):
+@app.post("/runs")
+async def document_retrieval(db: Annotated[AsyncSession, Depends(get_db)], query: Annotated[str, "No query provided"], profile: Annotated[dict, Depends(get_user_profile)]):
     user_id = profile['user_id']
-    return await get_document_user(db,user_id)    
+    return await run_get_answer(db, query=query)
+
+@app.get("/get-documents")
+async def get_AllDocuments_USER(db: Annotated[AsyncSession, Depends(get_db)], profile: Annotated[dict, Depends(get_user_profile)]):
+    user_id = profile['user_id']
+    return await get_document_user(db, user_id)   
+
+@app.get("/documents/process")
+async def process_File(file_path: str, document_id: str, db: Annotated[AsyncSession, Depends(get_db)], profile: Annotated[dict, Depends(get_user_profile)]):
+    user_id = profile['user_id']
+    return await process_file(file_path, db, user_id, document_id=document_id)
+
+@app.delete("/documents/{document_id}")
+async def delete_Document(document_id: str, db: Annotated[AsyncSession, Depends(get_db)], profile: Annotated[dict, Depends(get_user_profile)]):
+    """
+    Delete a document and all its associated Chroma embeddings and Postgres chunk records.
+    """
+    return await delete_document(db, document_id)
